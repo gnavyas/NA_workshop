@@ -1,16 +1,18 @@
-frontend httpns
+frontend http
     bind *:80
-    timeout client 10000000ms
-    mode http
-    default_backend backend_servers
+    timeout client 10000ms
+    mode {{ haproxy_mode }}
+    default_backend {{ backend_servers }}
 
-backend backend_servers
-    balance {{ process }}
-    mode http
-    timeout connect 1000000ms
-    timeout server 500000ms
-    timeout queue 600000
-    option httpchk
+backend {{ haproxy_backend_servers }}
+    balance {{ haproxy_algorithm }}
+    haproxy_mode http
+    timeout connect haproxy 90000s
+    timeout server haproxy 70000s
+    timeout queue haproxy 50000s
+    mode {{ haproxy_mode }}
+    option httpclose
+    option forwardfor
 {%  for server in groups['webservers'] %}
-    server {{ hostvars[server]['inventory_hostname'] }} {{ hostvars[server]['ansible_default_ipv4']['address']}}:80
+    server {{ hostvars[server]['inventory_hostname'] }} {{ hostvars[server]['ansible_default_ipv4']['address']}}:80 check
 {% endfor %}
