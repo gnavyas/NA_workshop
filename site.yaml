@@ -3,7 +3,7 @@
   become: yes
   vars:
     debug:
-    - msg: "Welcome to webservers"
+    - msg: "Welcome webservers"
   
   tasks:
     - name: Ensure  Nginx Install  
